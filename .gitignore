@@ -1,0 +1,10 @@
+# Secret
+.env
+
+# VectorDB (có thể index lại, không cần commit)
+vectorstore/
+
+# Python
+__pycache__/
+*.pyc
+.venv/
