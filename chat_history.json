@@ -1,0 +1,18 @@
+{
+  "20260310_002513": {
+    "session_id": "20260310_002513",
+    "updated_at": "2026-03-10T00:27:13.524956",
+    "turns": [
+      {
+        "user": "lương được lãnh vào ngày nào",
+        "bot": "Lương được trả vào ngày **10 của tháng kế tiếp**. Nếu ngày 10 rơi vào cuối tuần hoặc ngày lễ, lương sẽ được thanh toán vào ngày làm việc **gần nhất trước đó**. (Hình thức thanh toán là chuyển khoản ngân hàng.)",
+        "time": "00:25:55"
+      },
+      {
+        "user": "trường hợp nào là nghỉ có lương",
+        "bot": "**Nghỉ có lương** (trả lương bình thường) bao gồm các trường hợp sau:\n\n1. **Nghỉ lễ hôn** – 3 ngày (cho nhân viên kết hôn).  \n2. **Nghỉ sau khi có con** – 1 ngày (cho nhân viên có con đẻ hoặc nuôi con).  \n3. **Nghỉ vì mất người thân** – 3 ngày cho mỗi trường hợp:  \n   - Bố/mẹ ruột hoặc bố/mẹ vợ/chồng mất;  \n   - Vợ/chồng mất;  \n   - Con mất.  \n4. **Nghỉ sau khi vợ sinh con** – 5 ngày (được trả cho chồng).  \n5. **Nghỉ thai sản** –",
+        "time": "00:27:13"
+      }
+    ]
+  }
+}

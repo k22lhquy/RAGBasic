@@ -6,17 +6,19 @@ from langchain_core.output_parsers import StrOutputParser
 
 from src.config import (
     LLM_BASE_URL, LLM_API_KEY, LLM_MODEL, LLM_TEMPERATURE,
-    TOP_K, MAX_OUTPUT_TOKENS, CONTEXT_TOKEN_LIMIT, CHARS_PER_TOKEN
+    TOP_K, MAX_OUTPUT_TOKENS, CONTEXT_TOKEN_LIMIT, CHARS_PER_TOKEN,
+    RERANK_TOP_K, RERANK_THRESHOLD
 )
 
 
-def get_llm():
+def get_llm(streaming: bool = False):
     return ChatOpenAI(
         base_url=LLM_BASE_URL,
         api_key=LLM_API_KEY,
         model=LLM_MODEL,
         temperature=LLM_TEMPERATURE,
-        max_tokens=MAX_OUTPUT_TOKENS
+        max_tokens=MAX_OUTPUT_TOKENS,
+        streaming=streaming   # ← bật/tắt streaming
     )
 
 
@@ -51,11 +53,8 @@ def format_docs(docs):
     return "\n\n---\n\n".join(formatted)
 
 
-def build_rag_chain(vectorstore, mode: str = "multi_query", use_reranker: bool = True):
-    """
-    mode         : "multi_query" hoặc "simple"
-    use_reranker : True = bật reranking sau khi retrieve
-    """
+def build_rag_chain(vectorstore, mode: str = "multi_query",
+                    use_reranker: bool = True, streaming: bool = True):
 
     if mode == "multi_query":
         from src.multi_query import build_multi_query_retriever
@@ -68,11 +67,10 @@ def build_rag_chain(vectorstore, mode: str = "multi_query", use_reranker: bool =
             search_kwargs={"k": TOP_K}
         )
 
-    # Khởi tạo reranker nếu bật
     reranker = None
     if use_reranker:
         from src.reranker import Reranker
-        reranker = Reranker()
+        reranker = Reranker(top_k=RERANK_TOP_K, threshold=RERANK_THRESHOLD)
         print("✅ Reranker: bật")
     else:
         print("⏭️  Reranker: tắt")
@@ -95,17 +93,14 @@ Không được bịa đặt thông tin ngoài tài liệu.
 === TRẢ LỜI ===
 """)
 
-    llm = get_llm()
+    # Dùng streaming LLM cho chain trả lời
+    llm = get_llm(streaming=streaming)
     last_docs = {"docs": []}
 
     def retrieve_and_format(question: str) -> str:
-        # Bước 1: Retrieve
         docs = retriever.invoke(question)
-
-        # Bước 2: Rerank (nếu bật)
         if reranker is not None:
             docs = reranker.rerank(question, docs)
-
         last_docs["docs"] = docs
         return format_docs(docs)
 
@@ -124,7 +119,8 @@ Không được bịa đặt thông tin ngoài tài liệu.
 
 
 def ask(chain, last_docs: dict, question: str,
-        history=None, rephrase_chain=None, show_sources: bool = True):
+        history=None, rephrase_chain=None,
+        show_sources: bool = True, streaming: bool = True):
 
     from src.history import rephrase_question
 
@@ -137,12 +133,25 @@ def ask(chain, last_docs: dict, question: str,
 
     history_text = history.format() if history else "(chưa có lịch sử)"
 
-    answer = chain.invoke({
-        "question": search_question,
-        "history": history_text
-    })
+    print("💬 Trả lời:")
 
-    print(f"💬 Trả lời:\n{answer}")
+    if streaming:
+        # Stream từng token ra màn hình ngay khi nhận được
+        full_answer = ""
+        for chunk in chain.stream({
+            "question": search_question,
+            "history":  history_text
+        }):
+            print(chunk, end="", flush=True)  # flush=True để in ngay không chờ buffer
+            full_answer += chunk
+        print()  # xuống dòng sau khi stream xong
+        answer = full_answer
+    else:
+        answer = chain.invoke({
+            "question": search_question,
+            "history":  history_text
+        })
+        print(answer)
 
     if history is not None:
         history.add(user=question, bot=answer)
@@ -161,8 +170,8 @@ def ask(chain, last_docs: dict, question: str,
             source = doc.metadata.get("source", "unknown")
             page = doc.metadata.get("page", "")
             page_info = f" trang {page + 1}" if page != "" else ""
-            rerank_score = doc.metadata.get("rerank_score", None)
-            score_info = f" | rerank score: {rerank_score}" if rerank_score else ""
+            rerank_score = doc.metadata.get("rerank_score")
+            score_info = f" | score: {rerank_score:+.2f}" if rerank_score is not None else ""
             print(f"  [{i}] {source}{page_info}{score_info}")
             print(f"      {doc.page_content[:120]}...")
 
