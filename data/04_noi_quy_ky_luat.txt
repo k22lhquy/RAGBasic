@@ -1,0 +1,78 @@
+NỘI QUY LÀM VIỆC VÀ KỶ LUẬT - CÔNG TY TECHVIET JSC
+
+1. GIỜ LÀM VIỆC
+
+Giờ làm việc chính thức:
+- Thứ Hai đến Thứ Sáu: 08:30 - 17:30
+- Giờ nghỉ trưa: 12:00 - 13:00 (1 tiếng)
+- Thứ Bảy, Chủ Nhật: nghỉ
+
+Quy định giờ giấc:
+- Được phép đến muộn tối đa 15 phút, không quá 3 lần/tháng
+- Đến muộn quá 15 phút tính là đi muộn và bị trừ phụ cấp chuyên cần
+- Về sớm hơn 17:30 phải được sự đồng ý của quản lý trực tiếp
+
+Chế độ làm việc linh hoạt (Flexible Working):
+- Nhân viên có thể đăng ký làm việc theo khung giờ 07:30-16:30 hoặc 09:30-18:30
+- Phải đăng ký với HR và được quản lý duyệt
+- Áp dụng sau khi nhân viên đã qua thử việc
+
+2. LÀM VIỆC TỪ XA (WORK FROM HOME)
+
+Chính sách WFH:
+- Nhân viên được làm việc từ xa tối đa 2 ngày/tuần
+- Phải đăng ký WFH trước 08:00 cùng ngày qua Slack channel #wfh-request
+- Ngày WFH vẫn phải online và phản hồi tin nhắn trong giờ làm việc
+- Không áp dụng WFH trong thời gian thử việc
+
+Thiết bị làm việc từ xa:
+- Công ty cung cấp laptop cho tất cả nhân viên
+- Internet tại nhà do nhân viên tự chi trả (có thể report expense nếu trên 200.000/tháng)
+
+3. TRANG PHỤC
+
+Thứ Hai đến Thứ Năm: trang phục công sở lịch sự
+Thứ Sáu: trang phục tự do (casual), không mặc quần short, dép lê
+Khi gặp khách hàng/đối tác: bắt buộc mặc áo có cổ, quần dài
+
+4. SỬ DỤNG TÀI SẢN CÔNG TY
+
+Máy tính, thiết bị:
+- Chỉ dùng cho mục đích công việc
+- Không cài phần mềm không được phép
+- Báo IT ngay khi có sự cố kỹ thuật
+
+Bảo mật thông tin:
+- Không chia sẻ tài khoản, mật khẩu với người khác
+- Không gửi tài liệu mật ra bên ngoài khi chưa được phép
+- Khóa màn hình khi rời khỏi máy tính
+
+5. QUY ĐỊNH KỶ LUẬT
+
+Mức 1 - Nhắc nhở bằng miệng:
+- Đi muộn/về sớm lần đầu
+- Vi phạm trang phục lần đầu
+
+Mức 2 - Cảnh cáo bằng văn bản:
+- Vi phạm nội quy từ 3 lần trở lên trong 1 tháng
+- Làm việc riêng trong giờ làm, ảnh hưởng hiệu suất
+- Thái độ không chuyên nghiệp với đồng nghiệp/khách hàng
+
+Mức 3 - Trừ lương/thưởng:
+- Vi phạm nghiêm trọng quy định bảo mật
+- Gây thiệt hại tài sản công ty do bất cẩn
+- Vắng mặt không phép từ 2 ngày trở lên
+
+Mức 4 - Sa thải:
+- Tiết lộ bí mật kinh doanh cho đối thủ
+- Gian lận, tham nhũng, trộm cắp tài sản công ty
+- Quấy rối tình dục tại nơi làm việc
+- Vắng mặt không phép từ 5 ngày liên tiếp trở lên
+
+6. GIẢI QUYẾT KHIẾU NẠI
+
+Nhân viên có thắc mắc hoặc khiếu nại:
+- Bước 1: Trao đổi trực tiếp với quản lý trực tiếp
+- Bước 2: Nếu chưa giải quyết được, gửi email cho HR (hr@techviet.vn)
+- Bước 3: Nếu vẫn chưa giải quyết, gửi đơn lên Ban Giám đốc
+- Thời gian phản hồi khiếu nại: tối đa 5 ngày làm việc

@@ -39,7 +39,7 @@ TEST_CASES = [
 ]
 
 
-def build_vectorstore(embedding_model, use_prefix=False):
+def build_vectorstore(embedding_model, use_prefix=False, collection_name="eval_test"):
     """Tạo vectorstore từ DOCUMENTS"""
     if use_prefix:
         texts = [f"passage: {doc}" for doc in DOCUMENTS]
@@ -52,7 +52,7 @@ def build_vectorstore(embedding_model, use_prefix=False):
     return Chroma.from_documents(
         documents=docs,
         embedding=embedding_model,
-        collection_name="eval_test"
+        collection_name=collection_name
     )
 
 
@@ -68,7 +68,9 @@ def evaluate(model_name, use_prefix=False, top_k=4):
         encode_kwargs={"normalize_embeddings": True}
     )
 
-    vs = build_vectorstore(embeddings, use_prefix)
+    # Tạo collection name riêng cho mỗi model (tránh xung đột chiều embedding)
+    safe_name = model_name.replace("/", "_").replace("-", "_")
+    vs = build_vectorstore(embeddings, use_prefix, collection_name=safe_name)
     retriever = vs.as_retriever(search_kwargs={"k": top_k})
 
     hits = 0

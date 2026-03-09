@@ -1,13 +1,11 @@
 # main.py
-"""
-Entry point - chạy indexing và chat với tài liệu
-"""
 import os
 import sys
 
 from src.indexing import run_indexing, load_vectorstore
 from src.embedding import get_embedding_model
 from src.rag_chain import build_rag_chain, ask
+from src.history import ConversationHistory, build_rephrase_chain
 
 
 def main():
@@ -17,7 +15,6 @@ def main():
 
     embeddings = get_embedding_model()
 
-    # Nếu VectorDB đã tồn tại thì load lại, không cần index lại
     if os.path.exists("vectorstore") and os.listdir("vectorstore"):
         print("⚡ Tìm thấy VectorDB có sẵn, đang load...")
         vectorstore = load_vectorstore(embeddings)
@@ -29,11 +26,13 @@ def main():
             print("\n💡 Hướng dẫn: Hãy bỏ file PDF hoặc TXT vào thư mục 'data/' rồi chạy lại.")
             sys.exit(1)
 
-    # Build RAG chain
-    chain, retriever = build_rag_chain(vectorstore)
+    chain, last_docs = build_rag_chain(vectorstore)
 
-    # Chat loop
-    print("\n✅ Sẵn sàng! Nhập câu hỏi (gõ 'exit' để thoát)\n")
+    # Khởi tạo history và rephrase chain
+    history = ConversationHistory(max_turns=5)
+    rephrase_chain = build_rephrase_chain()
+
+    print("\n✅ Sẵn sàng! Nhập câu hỏi (gõ 'exit' để thoát, 'clear' để xóa lịch sử)\n")
     while True:
         question = input("Bạn: ").strip()
         if not question:
@@ -41,8 +40,14 @@ def main():
         if question.lower() in ["exit", "quit", "thoát"]:
             print("👋 Tạm biệt!")
             break
+        if question.lower() == "clear":
+            history.clear()
+            print("🗑️  Đã xóa lịch sử hội thoại\n")
+            continue
 
-        ask(chain, retriever, question)
+        ask(chain, last_docs, question,
+            history=history,
+            rephrase_chain=rephrase_chain)
         print()
 
 

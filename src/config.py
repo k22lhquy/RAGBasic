@@ -25,8 +25,8 @@ VECTORSTORE_DIR = "vectorstore"
 COLLECTION_NAME = "documents"
 
 # === Chunking ===
-CHUNK_SIZE = 500
-CHUNK_OVERLAP = 50
+CHUNK_SIZE = 1500
+CHUNK_OVERLAP = 150
 
 # === Retrieval ===
-TOP_K = 4  # lấy top K chunks — ảnh hưởng trực tiếp đến token đầu vào
+TOP_K = 3  # giảm xuống 3 vì chunk lớn hơn — ảnh hưởng trực tiếp đến token đầu vào
