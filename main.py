@@ -5,7 +5,8 @@ Entry point - chạy indexing và chat với tài liệu
 import os
 import sys
 
-from src.indexing import run_indexing, load_vectorstore, get_embedding_model
+from src.indexing import run_indexing, load_vectorstore
+from src.embedding import get_embedding_model
 from src.rag_chain import build_rag_chain, ask
 
 

@@ -1,6 +1,6 @@
 # src/indexing.py
 import os
-from langchain_huggingface import HuggingFaceEmbeddings
+from src.embedding import get_embedding_model
 from langchain_text_splitters import RecursiveCharacterTextSplitter
 from langchain_community.document_loaders import PyPDFLoader
 from langchain_chroma import Chroma
@@ -63,15 +63,6 @@ def chunk_documents(documents):
     return chunks
 
 
-def get_embedding_model():
-    print(f"⏳ Loading embedding model: {EMBEDDING_MODEL}")
-    embeddings = HuggingFaceEmbeddings(
-        model_name=EMBEDDING_MODEL,
-        model_kwargs={"device": "cpu"},
-        encode_kwargs={"normalize_embeddings": True}
-    )
-    print("✅ Embedding model loaded")
-    return embeddings
 
 
 def build_vectorstore(chunks, embeddings):
