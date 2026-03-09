@@ -14,5 +14,46 @@
         "time": "00:27:13"
       }
     ]
+  },
+  "20260310_005735": {
+    "session_id": "20260310_005735",
+    "updated_at": "2026-03-10T01:01:01.354669",
+    "turns": [
+      {
+        "user": "nhận lương như thế nào ?",
+        "bot": "Tài liệu không đề cập đến vấn đề này.",
+        "time": "00:57:43"
+      },
+      {
+        "user": "nhân viên đóng bảo hiểm như thế nào",
+        "bot": "Nhân viên sẽ đóng bảo hiểm như sau:\n\n- BHXH: nhân viên đóng 8% trên lương cơ bản\n- BHYT: nhân viên đóng 1.5% trên lương cơ bản\n- BHTN: nhân viên đóng 1% trên lương cơ bản\n\nCông ty sẽ đóng phần còn lại của bảo hiểm bắt buộc theo luật. Ngoài ra, công ty cũng sẽ chi trả 100% chi phí bảo hiểm sức khỏe PTI Care gói Bạc cho nhân viên.",
+        "time": "00:58:24"
+      },
+      {
+        "user": "phát lương vào ngày nào ?",
+        "bot": "Ngày phát lương của nhân viên là ngày 10 của tháng kế tiếp. Nếu ngày 10 rơi vào cuối tuần hoặc ngày lễ, lương được thanh toán vào ngày làm việc gần nhất trước đó.",
+        "time": "00:59:08"
+      },
+      {
+        "user": "thưởng KPI theo quý loại A được bao nhiêu",
+        "bot": "Thưởng KPI theo quý loại A cho nhân viên là 2 tháng lương cơ bản.",
+        "time": "00:59:44"
+      },
+      {
+        "user": "còn loại B thì sao",
+        "bot": "Thưởng KPI theo quý loại B cho nhân viên là 1 tháng lương cơ bản.",
+        "time": "00:59:56"
+      },
+      {
+        "user": "1 năm có bao nhiêu ngày nghỉ lê",
+        "bot": "Một năm có 13 ngày nghỉ lễ quốc gia. Ngoài ra, công ty cũng có các ngày nghỉ theo chính sách công ty, bao gồm 0.5 ngày cho Quốc tế Phụ nữ, 0.5 ngày cho Ngày Gia đình Việt Nam, 0.5 ngày cho Ngày Phụ nữ Việt Nam, 1 ngày cho Sinh nhật Công ty TechViet và 1 ngày cho Team Building cuối năm.",
+        "time": "01:00:17"
+      },
+      {
+        "user": "nghỉ sản phụ như thế nào",
+        "bot": "Tài liệu không đề cập đến vấn đề này.",
+        "time": "01:01:01"
+      }
+    ]
   }
 }

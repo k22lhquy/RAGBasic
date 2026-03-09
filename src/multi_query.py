@@ -48,7 +48,7 @@ Câu hỏi gốc: {question}"""
     # Base retriever
     base_retriever = vectorstore.as_retriever(
         search_type="similarity",
-        search_kwargs={"k": 3}
+        search_kwargs={"k": 4}
     )
 
     def retriever(question: str):
