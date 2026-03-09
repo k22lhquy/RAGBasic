@@ -24,7 +24,6 @@ def truncate_docs(docs):
     max_chars = CONTEXT_TOKEN_LIMIT * CHARS_PER_TOKEN
     total_chars = 0
     kept_docs = []
-
     for doc in docs:
         doc_len = len(doc.page_content)
         if total_chars + doc_len > max_chars:
@@ -35,7 +34,6 @@ def truncate_docs(docs):
             break
         kept_docs.append(doc)
         total_chars += doc_len
-
     total_tokens_est = total_chars // CHARS_PER_TOKEN
     print(f"   📊 Context: {len(kept_docs)}/{len(docs)} chunks "
           f"| ~{total_tokens_est} tokens (giới hạn {CONTEXT_TOKEN_LIMIT})")
@@ -53,7 +51,11 @@ def format_docs(docs):
     return "\n\n---\n\n".join(formatted)
 
 
-def build_rag_chain(vectorstore, mode: str = "multi_query"):
+def build_rag_chain(vectorstore, mode: str = "multi_query", use_reranker: bool = True):
+    """
+    mode         : "multi_query" hoặc "simple"
+    use_reranker : True = bật reranking sau khi retrieve
+    """
 
     if mode == "multi_query":
         from src.multi_query import build_multi_query_retriever
@@ -66,7 +68,15 @@ def build_rag_chain(vectorstore, mode: str = "multi_query"):
             search_kwargs={"k": TOP_K}
         )
 
-    # Prompt có thêm history
+    # Khởi tạo reranker nếu bật
+    reranker = None
+    if use_reranker:
+        from src.reranker import Reranker
+        reranker = Reranker()
+        print("✅ Reranker: bật")
+    else:
+        print("⏭️  Reranker: tắt")
+
     prompt = ChatPromptTemplate.from_template("""
 Bạn là trợ lý thông minh. Hãy trả lời câu hỏi CHỈ DỰA TRÊN thông tin trong tài liệu được cung cấp.
 
@@ -89,14 +99,16 @@ Không được bịa đặt thông tin ngoài tài liệu.
     last_docs = {"docs": []}
 
     def retrieve_and_format(question: str) -> str:
+        # Bước 1: Retrieve
         docs = retriever.invoke(question)
-        last_docs["docs"] = docs
-        context = format_docs(docs)
-        print(f"\n   🧩 Context gửi LLM (200 ký tự đầu):")
-        print(f"   {context[:200]}...")
-        return context
 
-    # Chain nhận dict gồm question + history
+        # Bước 2: Rerank (nếu bật)
+        if reranker is not None:
+            docs = reranker.rerank(question, docs)
+
+        last_docs["docs"] = docs
+        return format_docs(docs)
+
     chain = (
         {
             "context":  RunnableLambda(lambda x: retrieve_and_format(x["question"])),
@@ -113,23 +125,18 @@ Không được bịa đặt thông tin ngoài tài liệu.
 
 def ask(chain, last_docs: dict, question: str,
         history=None, rephrase_chain=None, show_sources: bool = True):
-    """
-    history        : ConversationHistory object (None = không dùng history)
-    rephrase_chain : chain để rephrase câu hỏi (None = không rephrase)
-    """
+
     from src.history import rephrase_question
 
     print(f"\n❓ Câu hỏi: {question}")
     print("-" * 50)
 
-    # Rephrase câu hỏi nếu có history
     search_question = question
     if history is not None and rephrase_chain is not None:
         search_question = rephrase_question(rephrase_chain, history, question)
 
     history_text = history.format() if history else "(chưa có lịch sử)"
 
-    # Gọi chain 1 lần duy nhất
     answer = chain.invoke({
         "question": search_question,
         "history": history_text
@@ -137,11 +144,9 @@ def ask(chain, last_docs: dict, question: str,
 
     print(f"💬 Trả lời:\n{answer}")
 
-    # Lưu vào history
     if history is not None:
         history.add(user=question, bot=answer)
 
-    # Hiển thị sources
     if show_sources and last_docs["docs"]:
         seen = set()
         unique_docs = []
@@ -156,7 +161,9 @@ def ask(chain, last_docs: dict, question: str,
             source = doc.metadata.get("source", "unknown")
             page = doc.metadata.get("page", "")
             page_info = f" trang {page + 1}" if page != "" else ""
-            print(f"  [{i}] {source}{page_info}")
+            rerank_score = doc.metadata.get("rerank_score", None)
+            score_info = f" | rerank score: {rerank_score}" if rerank_score else ""
+            print(f"  [{i}] {source}{page_info}{score_info}")
             print(f"      {doc.page_content[:120]}...")
 
     return answer
