@@ -1,5 +1,7 @@
 nvidia/nemotron-3-nano-30b-a3b:free
 
+uvicorn api:app --reload --port 8000
+
 # Tìm PID đang dùng port 8000
 netstat -ano | findstr ":8000"
 
