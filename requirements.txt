@@ -10,3 +10,7 @@ python-dotenv
 sentence-transformers
 torch
 tiktoken
+fastapi
+uvicorn[standard]
+python-multipart
+python-docx

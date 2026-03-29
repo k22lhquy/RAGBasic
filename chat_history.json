@@ -55,5 +55,125 @@
         "time": "01:01:01"
       }
     ]
+  },
+  "20260328_212843": {
+    "session_id": "20260328_212843",
+    "updated_at": "2026-03-28T21:31:05.720329",
+    "turns": [
+      {
+        "user": "có bao nhiêu ngày nghỉ lễ quốc gia",
+        "bot": "Tổng ngày nghỉ lễ quốc gia là 13 ngày/năm.",
+        "time": "21:29:10"
+      },
+      {
+        "user": "làm 9 năm thì được bao nhiêu ngày phép cơ bản",
+        "bot": "Nếu một người làm việc 9 năm thì họ sẽ được 12 ngày phép cơ bản (vì họ đã làm việc đủ 12 tháng) và được cộng thêm 1 ngày phép do thâm niên (vì họ đã làm việc từ 5 năm đến dưới 10 năm). Vậy tổng số ngày phép cơ bản của họ là 13 ngày.",
+        "time": "21:30:28"
+      },
+      {
+        "user": "còn 16 năm thì sao",
+        "bot": "Nếu một người làm việc 16 năm thì họ sẽ được 12 ngày phép cơ bản (vì họ đã làm việc đủ 12 tháng) và được cộng thêm 3 ngày phép do thâm niên (vì họ đã làm việc từ 15 năm trở lên). Vậy tổng số ngày phép cơ bản của họ là 15 ngày.",
+        "time": "21:31:05"
+      }
+    ]
+  },
+  "20260328_215359": {
+    "session_id": "20260328_215359",
+    "updated_at": "2026-03-28T21:54:01.254255",
+    "turns": [
+      {
+        "user": "nhan vien duoc nghi phep bao nhieu ngay?",
+        "bot": "Số ngày phép cơ bản:\n- Nhân viên làm việc đủ 12 tháng: 12 ngày/năm\n- Nhân viên thử việc (dưới 12 tháng): tính theo tỉ lệ (1 ngày/tháng)\n\nThâm niên cộng thêm phép:\n- Từ 5 năm đến dưới 10 năm: cộng thêm 1 ngày → tổng 13 ngày\n- Từ 10 năm đến dưới 15 năm: cộng thêm 2 ngày → tổng 14 ngày\n- Từ 15 năm trở lên: cộng thêm 3 ngày → tổng 15 ngày",
+        "time": "21:54:01"
+      }
+    ]
+  },
+  "20260329_204813": {
+    "session_id": "20260329_204813",
+    "updated_at": "2026-03-29T20:48:15.919887",
+    "turns": [
+      {
+        "user": "chào",
+        "bot": "Chào bạn, tôi sẵn sàng giúp đỡ bạn với thông tin trong tài liệu được cung cấp. Bạn có câu hỏi gì không?",
+        "time": "20:48:15"
+      }
+    ]
+  },
+  "20260329_204902": {
+    "session_id": "20260329_204902",
+    "updated_at": "2026-03-29T20:49:03.702244",
+    "turns": [
+      {
+        "user": "cho tôi hỏi là có tổng bao nhiêu ngày nghỉ quốc gia",
+        "bot": "Tổng ngày nghỉ lễ quốc gia là 13 ngày/năm.",
+        "time": "20:49:03"
+      }
+    ]
+  },
+  "20260329_205002": {
+    "session_id": "20260329_205002",
+    "updated_at": "2026-03-29T20:50:03.804530",
+    "turns": [
+      {
+        "user": "Lê Hữu Quý làm về đề tài gì",
+        "bot": "Lê Hữu Quý làm về đề tài \"Xây dựng hệ thống tra cứu tài liệu thông minh sử dụng kỹ thuật Retrieval-Augmented Generation (RAG) và mô hình ngôn ngữ lớn (LLM)\".",
+        "time": "20:50:03"
+      }
+    ]
+  },
+  "20260329_205107": {
+    "session_id": "20260329_205107",
+    "updated_at": "2026-03-29T20:51:08.834638",
+    "turns": [
+      {
+        "user": "đối tượng nghiên cứu là gì",
+        "bot": "Đối tượng nghiên cứu là sinh viên đại học, cao đẳng có nhu cầu học tập và ôn luyện kiến thức, cũng như công nghệ mô hình ngôn ngữ lớn (LLM) và kỹ thuật RAG (Retrieval-Augmented Generation) trong việc hỗ trợ học tập.",
+        "time": "20:51:08"
+      }
+    ]
+  },
+  "20260329_205138": {
+    "session_id": "20260329_205138",
+    "updated_at": "2026-03-29T20:51:40.206753",
+    "turns": [
+      {
+        "user": "còn phạm vi",
+        "bot": "Tài liệu không đề cập đến vấn đề này.",
+        "time": "20:51:40"
+      }
+    ]
+  },
+  "20260329_205200": {
+    "session_id": "20260329_205200",
+    "updated_at": "2026-03-29T20:52:02.203074",
+    "turns": [
+      {
+        "user": "ý tôi là phạm vi nghiên cứu",
+        "bot": "Phạm vi nghiên cứu của đề tài này bao gồm các phương pháp xử lý văn bản, truy xuất thông tin và sinh nội dung tự động bằng AI, cũng như ứng dụng kỹ thuật RAG để truy xuất và sinh câu trả lời dựa trên dữ liệu nội bộ của hệ thống.",
+        "time": "20:52:02"
+      }
+    ]
+  },
+  "20260329_205308": {
+    "session_id": "20260329_205308",
+    "updated_at": "2026-03-29T20:53:10.581376",
+    "turns": [
+      {
+        "user": "công nghệ sử dụng gồm những gì",
+        "bot": "Công nghệ sử dụng gồm những thành phần sau:\n\n- Frontend: ReactJS hoặc NextJS, TailwindCSS\n- Backend: Python (FastAPI), có thể sử dụng Node.js cho một số chức năng\n- AI và RAG: LLM (Llama 3, Mistral hoặc Phi-3), Embedding model (BGE hoặc E5), Framework (LangChain hoặc LlamaIndex)\n- Cơ sở dữ liệu: PostgreSQL\n- Vector database: FAISS, Chroma hoặc Qdrant\n- Xử lý tài liệu: PyMuPDF hoặc pdfplumber\n- Triển khai: Docker, VPS hoặc Cloud (AWS, GCP, Azure)",
+        "time": "20:53:10"
+      }
+    ]
+  },
+  "20260329_205403": {
+    "session_id": "20260329_205403",
+    "updated_at": "2026-03-29T20:54:05.634437",
+    "turns": [
+      {
+        "user": "cho tôi hỏi mức nhẹ nhất về việc vi phạm quy định kỷ luật",
+        "bot": "Mức nhẹ nhất về việc vi phạm quy định kỷ luật là Mức 1 - Nhắc nhở bằng miệng, áp dụng cho các trường hợp như đi muộn/về sớm lần đầu hoặc vi phạm trang phục lần đầu.",
+        "time": "20:54:05"
+      }
+    ]
   }
 }

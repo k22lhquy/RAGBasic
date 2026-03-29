@@ -1,0 +1,1118 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>RAGCloude</title>
+    <link
+        href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,600;1,9..144,300&display=swap"
+        rel="stylesheet" />
+    <style>
+        /* ── Reset & Base ── */
+        *,
+        *::before,
+        *::after {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        :root {
+            --bg: #0e0f11;
+            --surface: #16181c;
+            --surface2: #1e2026;
+            --border: #2a2d35;
+            --accent: #c8f060;
+            --accent2: #60c8f0;
+            --text: #e8eaf0;
+            --muted: #6b7080;
+            --user-bg: #1e2530;
+            --bot-bg: #161a1f;
+            --danger: #f06060;
+            --radius: 12px;
+            --font-mono: 'DM Mono', monospace;
+            --font-serif: 'Fraunces', serif;
+        }
+
+        html,
+        body {
+            height: 100%;
+            background: var(--bg);
+            color: var(--text);
+            font-family: var(--font-mono);
+            font-size: 14px;
+            line-height: 1.6;
+            overflow: hidden;
+        }
+
+        /* ── Layout ── */
+        .shell {
+            display: grid;
+            grid-template-columns: 260px 1fr;
+            height: 100vh;
+        }
+
+        /* ── Sidebar ── */
+        .sidebar {
+            background: var(--surface);
+            border-right: 1px solid var(--border);
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        .sidebar-header {
+            padding: 20px 18px 16px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .logo {
+            font-family: var(--font-serif);
+            font-size: 22px;
+            font-weight: 600;
+            color: var(--accent);
+            letter-spacing: -0.5px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .logo-dot {
+            width: 8px;
+            height: 8px;
+            background: var(--accent);
+            border-radius: 50%;
+            animation: pulse 2s ease-in-out infinite;
+        }
+
+        @keyframes pulse {
+
+            0%,
+            100% {
+                opacity: 1;
+                transform: scale(1);
+            }
+
+            50% {
+                opacity: 0.4;
+                transform: scale(0.7);
+            }
+        }
+
+        .logo-sub {
+            font-size: 11px;
+            color: var(--muted);
+            font-family: var(--font-mono);
+            font-weight: 400;
+            margin-top: 2px;
+            letter-spacing: 0.5px;
+        }
+
+        .btn-new {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            width: 100%;
+            margin-top: 14px;
+            padding: 10px 14px;
+            background: var(--accent);
+            color: #0e0f11;
+            border: none;
+            border-radius: var(--radius);
+            font-family: var(--font-mono);
+            font-size: 13px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: opacity 0.15s, transform 0.1s;
+        }
+
+        .btn-new:hover {
+            opacity: 0.88;
+        }
+
+        .btn-new:active {
+            transform: scale(0.98);
+        }
+
+        /* ── Session list ── */
+        .sessions-label {
+            padding: 12px 18px 6px;
+            font-size: 10px;
+            letter-spacing: 1.5px;
+            color: var(--muted);
+            text-transform: uppercase;
+        }
+
+        .sessions-list {
+            flex: 1;
+            overflow-y: auto;
+            padding: 4px 10px 10px;
+        }
+
+        .sessions-list::-webkit-scrollbar {
+            width: 4px;
+        }
+
+        .sessions-list::-webkit-scrollbar-thumb {
+            background: var(--border);
+            border-radius: 2px;
+        }
+
+        .session-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 9px 10px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background 0.12s;
+            margin-bottom: 2px;
+        }
+
+        .session-item:hover {
+            background: var(--surface2);
+        }
+
+        .session-item.active {
+            background: var(--surface2);
+            border: 1px solid var(--border);
+        }
+
+        .session-item .s-icon {
+            font-size: 15px;
+            flex-shrink: 0;
+        }
+
+        .session-item .s-info {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .session-item .s-id {
+            font-size: 11px;
+            color: var(--text);
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        .session-item .s-meta {
+            font-size: 10px;
+            color: var(--muted);
+            margin-top: 1px;
+        }
+
+        .session-item .s-del {
+            opacity: 0;
+            color: var(--danger);
+            cursor: pointer;
+            font-size: 13px;
+            padding: 2px 4px;
+            border-radius: 4px;
+            flex-shrink: 0;
+        }
+
+        .session-item:hover .s-del {
+            opacity: 1;
+        }
+
+        /* ── Main ── */
+        .main {
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        /* ── Topbar ── */
+        .topbar {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 14px 20px;
+            border-bottom: 1px solid var(--border);
+            background: var(--surface);
+            flex-shrink: 0;
+        }
+
+        .topbar-session {
+            font-size: 12px;
+            color: var(--muted);
+        }
+
+        .topbar-session span {
+            color: var(--accent2);
+            font-weight: 500;
+        }
+
+        .topbar-right {
+            margin-left: auto;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .badge-files {
+            font-size: 11px;
+            color: var(--muted);
+            background: var(--surface2);
+            padding: 3px 10px;
+            border-radius: 20px;
+            border: 1px solid var(--border);
+        }
+
+        .badge-files.has-files {
+            color: var(--accent);
+            border-color: var(--accent);
+        }
+
+        /* ── Upload area ── */
+        .upload-zone {
+            padding: 10px 20px;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            background: var(--surface);
+            flex-shrink: 0;
+        }
+
+        .upload-zone.no-session {
+            opacity: 0.4;
+            pointer-events: none;
+        }
+
+        .upload-btn {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            padding: 7px 14px;
+            background: transparent;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            color: var(--text);
+            font-family: var(--font-mono);
+            font-size: 12px;
+            cursor: pointer;
+            transition: border-color 0.15s, color 0.15s;
+            flex-shrink: 0;
+        }
+
+        .upload-btn:hover {
+            border-color: var(--accent2);
+            color: var(--accent2);
+        }
+
+        #file-input {
+            display: none;
+        }
+
+        .files-chips {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+            flex: 1;
+            overflow: hidden;
+        }
+
+        .file-chip {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            padding: 3px 10px 3px 8px;
+            background: var(--surface2);
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            font-size: 11px;
+            color: var(--text);
+            animation: chip-in 0.2s ease;
+        }
+
+        @keyframes chip-in {
+            from {
+                opacity: 0;
+                transform: scale(0.85);
+            }
+
+            to {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+
+        .file-chip .chip-del {
+            cursor: pointer;
+            color: var(--muted);
+            transition: color 0.12s;
+            font-size: 13px;
+            line-height: 1;
+        }
+
+        .file-chip .chip-del:hover {
+            color: var(--danger);
+        }
+
+        .upload-progress {
+            font-size: 11px;
+            color: var(--accent2);
+            animation: blink 1s ease-in-out infinite;
+        }
+
+        @keyframes blink {
+
+            0%,
+            100% {
+                opacity: 1;
+            }
+
+            50% {
+                opacity: 0.3;
+            }
+        }
+
+        /* ── Chat window ── */
+        .chat-window {
+            flex: 1;
+            overflow-y: auto;
+            padding: 24px 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .chat-window::-webkit-scrollbar {
+            width: 5px;
+        }
+
+        .chat-window::-webkit-scrollbar-thumb {
+            background: var(--border);
+            border-radius: 3px;
+        }
+
+        /* ── Empty state ── */
+        .empty-state {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            color: var(--muted);
+            text-align: center;
+        }
+
+        .empty-icon {
+            font-size: 48px;
+            opacity: 0.5;
+        }
+
+        .empty-title {
+            font-family: var(--font-serif);
+            font-size: 20px;
+            color: var(--text);
+            font-weight: 300;
+        }
+
+        .empty-sub {
+            font-size: 12px;
+            line-height: 1.8;
+        }
+
+        /* ── Messages ── */
+        .msg {
+            display: flex;
+            gap: 12px;
+            animation: msg-in 0.2s ease;
+            max-width: 820px;
+        }
+
+        @keyframes msg-in {
+            from {
+                opacity: 0;
+                transform: translateY(6px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .msg.user {
+            flex-direction: row-reverse;
+            align-self: flex-end;
+        }
+
+        .msg.bot {
+            align-self: flex-start;
+        }
+
+        .avatar {
+            width: 32px;
+            height: 32px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+            flex-shrink: 0;
+            margin-top: 2px;
+        }
+
+        .msg.user .avatar {
+            background: var(--user-bg);
+            border: 1px solid var(--border);
+        }
+
+        .msg.bot .avatar {
+            background: var(--surface2);
+            border: 1px solid var(--border);
+        }
+
+        .bubble {
+            max-width: 680px;
+            padding: 12px 16px;
+            border-radius: var(--radius);
+            line-height: 1.7;
+            font-size: 13.5px;
+            position: relative;
+        }
+
+        .msg.user .bubble {
+            background: var(--user-bg);
+            border: 1px solid #2a3545;
+            border-top-right-radius: 4px;
+            color: var(--text);
+        }
+
+        .msg.bot .bubble {
+            background: var(--bot-bg);
+            border: 1px solid var(--border);
+            border-top-left-radius: 4px;
+            color: var(--text);
+        }
+
+        .bubble-time {
+            font-size: 10px;
+            color: var(--muted);
+            margin-top: 5px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .sources-tag {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            font-size: 10px;
+            color: var(--accent2);
+            background: #1a2535;
+            padding: 2px 7px;
+            border-radius: 10px;
+            border: 1px solid #2a3545;
+        }
+
+        /* ── Thinking indicator ── */
+        .thinking {
+            display: flex;
+            gap: 5px;
+            align-items: center;
+            padding: 4px 0;
+        }
+
+        .thinking span {
+            width: 6px;
+            height: 6px;
+            background: var(--muted);
+            border-radius: 50%;
+            animation: bounce 1.2s ease-in-out infinite;
+        }
+
+        .thinking span:nth-child(2) {
+            animation-delay: 0.2s;
+        }
+
+        .thinking span:nth-child(3) {
+            animation-delay: 0.4s;
+        }
+
+        @keyframes bounce {
+
+            0%,
+            80%,
+            100% {
+                transform: translateY(0);
+                opacity: 0.4;
+            }
+
+            40% {
+                transform: translateY(-5px);
+                opacity: 1;
+            }
+        }
+
+        /* ── Input ── */
+        .input-area {
+            padding: 14px 20px;
+            border-top: 1px solid var(--border);
+            background: var(--surface);
+            flex-shrink: 0;
+        }
+
+        .input-row {
+            display: flex;
+            gap: 10px;
+            align-items: flex-end;
+            background: var(--surface2);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 10px 14px;
+            transition: border-color 0.15s;
+        }
+
+        .input-row:focus-within {
+            border-color: var(--accent);
+        }
+
+        #msg-input {
+            flex: 1;
+            background: transparent;
+            border: none;
+            outline: none;
+            color: var(--text);
+            font-family: var(--font-mono);
+            font-size: 13.5px;
+            line-height: 1.5;
+            resize: none;
+            max-height: 120px;
+            overflow-y: auto;
+        }
+
+        #msg-input::placeholder {
+            color: var(--muted);
+        }
+
+        #msg-input::-webkit-scrollbar {
+            width: 3px;
+        }
+
+        #msg-input::-webkit-scrollbar-thumb {
+            background: var(--border);
+        }
+
+        .send-btn {
+            width: 34px;
+            height: 34px;
+            background: var(--accent);
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: opacity 0.15s, transform 0.1s;
+            flex-shrink: 0;
+            color: #0e0f11;
+        }
+
+        .send-btn:hover {
+            opacity: 0.85;
+        }
+
+        .send-btn:active {
+            transform: scale(0.93);
+        }
+
+        .send-btn:disabled {
+            opacity: 0.3;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .input-hint {
+            font-size: 10px;
+            color: var(--muted);
+            margin-top: 7px;
+            padding-left: 2px;
+        }
+
+        /* ── No-session overlay ── */
+        .no-session-overlay {
+            position: absolute;
+            inset: 0;
+            background: rgba(14, 15, 17, 0.7);
+            backdrop-filter: blur(4px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 10;
+            pointer-events: none;
+            opacity: 0;
+            transition: opacity 0.2s;
+        }
+
+        .no-session-overlay.show {
+            opacity: 1;
+            pointer-events: all;
+        }
+
+        .overlay-card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 32px 40px;
+            text-align: center;
+            max-width: 320px;
+        }
+
+        .overlay-icon {
+            font-size: 40px;
+            margin-bottom: 12px;
+        }
+
+        .overlay-title {
+            font-family: var(--font-serif);
+            font-size: 18px;
+            font-weight: 600;
+            color: var(--text);
+            margin-bottom: 8px;
+        }
+
+        .overlay-sub {
+            font-size: 12px;
+            color: var(--muted);
+            line-height: 1.7;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="shell">
+
+        <!-- ── Sidebar ── -->
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <div class="logo">
+                    <div class="logo-dot"></div>
+                    RAGCloude
+                </div>
+                <div class="logo-sub">Document Q&amp;A System</div>
+                <button class="btn-new" onclick="createSession()">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                        stroke-width="2.5">
+                        <line x1="12" y1="5" x2="12" y2="19" />
+                        <line x1="5" y1="12" x2="19" y2="12" />
+                    </svg>
+                    Chat mới
+                </button>
+            </div>
+
+            <div class="sessions-label">Cuộc trò chuyện</div>
+            <div class="sessions-list" id="sessions-list">
+                <div style="padding:16px; color:var(--muted); font-size:11px; text-align:center;">
+                    Chưa có cuộc trò chuyện nào.<br />Nhấn "Chat mới" để bắt đầu.
+                </div>
+            </div>
+        </aside>
+
+        <!-- ── Main ── -->
+        <main class="main" style="position:relative;">
+
+            <!-- Topbar -->
+            <div class="topbar">
+                <div class="topbar-session">
+                    Session: <span id="current-session-label">—</span>
+                </div>
+                <div class="topbar-right">
+                    <div class="badge-files" id="files-badge">0 tài liệu</div>
+                </div>
+            </div>
+
+            <!-- Upload bar -->
+            <div class="upload-zone no-session" id="upload-zone">
+                <button class="upload-btn" onclick="document.getElementById('file-input').click()">
+                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4" />
+                        <polyline points="17 8 12 3 7 8" />
+                        <line x1="12" y1="3" x2="12" y2="15" />
+                    </svg>
+                    Upload tài liệu
+                </button>
+                <input type="file" id="file-input" multiple accept=".txt,.pdf,.docx,.doc"
+                    onchange="handleFileUpload(event)" />
+                <div class="files-chips" id="files-chips"></div>
+                <span class="upload-progress" id="upload-progress" style="display:none;">⏳ Đang xử lý...</span>
+            </div>
+
+            <!-- Chat window -->
+            <div class="chat-window" id="chat-window">
+                <div class="empty-state" id="empty-state">
+                    <div class="empty-icon">📄</div>
+                    <div class="empty-title">Bắt đầu cuộc trò chuyện</div>
+                    <div class="empty-sub">
+                        Tạo chat mới → Upload tài liệu → Đặt câu hỏi<br />
+                        Mỗi chat có kho tài liệu riêng, độc lập nhau.
+                    </div>
+                </div>
+            </div>
+
+            <!-- Input -->
+            <div class="input-area">
+                <div class="input-row">
+                    <textarea id="msg-input" rows="1" placeholder="Đặt câu hỏi về tài liệu đã upload..."
+                        onkeydown="handleKey(event)" oninput="autoResize(this)"></textarea>
+                    <button class="send-btn" id="send-btn" onclick="sendMessage()" disabled title="Gửi (Enter)">
+                        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2.5">
+                            <line x1="22" y1="2" x2="11" y2="13" />
+                            <polygon points="22 2 15 22 11 13 2 9 22 2" />
+                        </svg>
+                    </button>
+                </div>
+                <div class="input-hint">Enter gửi · Shift+Enter xuống dòng · Upload file PDF, DOCX, TXT</div>
+            </div>
+
+            <!-- No-session overlay -->
+            <div class="no-session-overlay show" id="no-session-overlay">
+                <div class="overlay-card">
+                    <div class="overlay-icon">💬</div>
+                    <div class="overlay-title">Chưa có chat nào</div>
+                    <div class="overlay-sub">
+                        Nhấn <strong style="color:var(--accent)">+ Chat mới</strong> ở thanh bên trái để tạo cuộc trò
+                        chuyện đầu tiên.
+                    </div>
+                </div>
+            </div>
+
+        </main>
+    </div>
+
+    <script>
+        const API = 'http://localhost:8000';
+
+        // ── State ──────────────────────────────────────────────────────────────────
+        let currentSession = null;   // session_id hiện tại
+        let sessions = {};     // sessions[id] = { files: [], messages: [] }
+
+        // ── Session ────────────────────────────────────────────────────────────────
+
+        async function createSession() {
+            try {
+                const res = await fetch(`${API}/sessions/new`, { method: 'POST' });
+                const data = await res.json();
+                const sid = data.session_id;
+
+                sessions[sid] = { files: [], messages: [] };
+                renderSessions();
+                switchSession(sid);
+            } catch (e) {
+                alert('Không kết nối được server: ' + e.message);
+            }
+        }
+
+        function switchSession(sid) {
+            currentSession = sid;
+            renderSessions();
+            renderChat();
+            updateTopbar();
+
+            // Bật/tắt overlay
+            document.getElementById('no-session-overlay').classList.remove('show');
+            document.getElementById('upload-zone').classList.remove('no-session');
+            document.getElementById('send-btn').disabled = false;
+        }
+
+        function renderSessions() {
+            const list = document.getElementById('sessions-list');
+            const ids = Object.keys(sessions);
+
+            if (!ids.length) {
+                list.innerHTML = `<div style="padding:16px; color:var(--muted); font-size:11px; text-align:center;">
+      Chưa có cuộc trò chuyện nào.<br/>Nhấn "Chat mới" để bắt đầu.</div>`;
+                return;
+            }
+
+            list.innerHTML = ids.map((sid, i) => {
+                const s = sessions[sid];
+                const label = `Chat ${i + 1}`;
+                const meta = s.files.length ? `${s.files.length} tài liệu` : 'Chưa có tài liệu';
+                const icon = s.files.length ? '📂' : '💬';
+                return `
+      <div class="session-item ${sid === currentSession ? 'active' : ''}" onclick="switchSession('${sid}')">
+        <span class="s-icon">${icon}</span>
+        <div class="s-info">
+          <div class="s-id">${label}</div>
+          <div class="s-meta">${meta} · ${s.messages.length} tin nhắn</div>
+        </div>
+        <span class="s-del" onclick="deleteSession(event,'${sid}')">✕</span>
+      </div>`;
+            }).join('');
+        }
+
+        async function deleteSession(e, sid) {
+            e.stopPropagation();
+            if (!confirm('Xóa session này?')) return;
+
+            try {
+                await fetch(`${API}/sessions/${sid}`, { method: 'DELETE' });
+            } catch (_) { }
+
+            delete sessions[sid];
+
+            if (currentSession === sid) {
+                currentSession = null;
+                document.getElementById('no-session-overlay').classList.add('show');
+                document.getElementById('upload-zone').classList.add('no-session');
+                document.getElementById('send-btn').disabled = true;
+                document.getElementById('chat-window').innerHTML = getEmptyHtml();
+                updateTopbar();
+            }
+
+            renderSessions();
+        }
+
+        // ── Topbar / Badge ─────────────────────────────────────────────────────────
+
+        function updateTopbar() {
+            const label = document.getElementById('current-session-label');
+            const badge = document.getElementById('files-badge');
+
+            if (!currentSession) {
+                label.textContent = '—';
+                badge.textContent = '0 tài liệu';
+                badge.classList.remove('has-files');
+                return;
+            }
+
+            const s = sessions[currentSession];
+            const idx = Object.keys(sessions).indexOf(currentSession) + 1;
+            label.textContent = `Chat ${idx} · ${currentSession}`;
+
+            const n = s.files.length;
+            badge.textContent = `${n} tài liệu`;
+            badge.classList.toggle('has-files', n > 0);
+        }
+
+        // ── Upload ─────────────────────────────────────────────────────────────────
+
+        async function handleFileUpload(e) {
+            if (!currentSession) return;
+            const files = Array.from(e.target.files);
+            if (!files.length) return;
+
+            const progress = document.getElementById('upload-progress');
+            progress.style.display = 'inline';
+
+            for (const file of files) {
+                const form = new FormData();
+                form.append('file', file);
+
+                try {
+                    const res = await fetch(`${API}/sessions/${currentSession}/upload`, { method: 'POST', body: form });
+                    const data = await res.json();
+
+                    if (data.status === 'added') {
+                        sessions[currentSession].files.push(data.filename);
+                        addFileChip(data.filename);
+                        updateTopbar();
+                        renderSessions();
+                    } else if (data.status === 'error') {
+                        alert(`Lỗi upload ${file.name}: ${data.message}`);
+                    }
+                } catch (err) {
+                    alert(`Không upload được ${file.name}: ${err.message}`);
+                }
+            }
+
+            progress.style.display = 'none';
+            e.target.value = '';
+        }
+
+        function addFileChip(filename) {
+            const chips = document.getElementById('files-chips');
+            const chip = document.createElement('div');
+            chip.className = 'file-chip';
+            chip.dataset.filename = filename;
+            chip.innerHTML = `
+    <span>📄</span>
+    <span>${truncate(filename, 20)}</span>
+    <span class="chip-del" onclick="removeFile('${filename}', this)" title="Xóa">✕</span>`;
+            chips.appendChild(chip);
+        }
+
+        async function removeFile(filename, el) {
+            if (!currentSession) return;
+            try {
+                await fetch(`${API}/sessions/${currentSession}/files/${encodeURIComponent(filename)}`, { method: 'DELETE' });
+            } catch (_) { }
+
+            el.closest('.file-chip').remove();
+            sessions[currentSession].files = sessions[currentSession].files.filter(f => f !== filename);
+            updateTopbar();
+            renderSessions();
+        }
+
+        // ── Chat ───────────────────────────────────────────────────────────────────
+
+        function handleKey(e) {
+            if (e.key === 'Enter' && !e.shiftKey) {
+                e.preventDefault();
+                sendMessage();
+            }
+        }
+
+        function autoResize(el) {
+            el.style.height = 'auto';
+            el.style.height = Math.min(el.scrollHeight, 120) + 'px';
+        }
+
+        async function sendMessage() {
+            if (!currentSession) return;
+
+            const input = document.getElementById('msg-input');
+            const text = input.value.trim();
+            if (!text) return;
+
+            input.value = '';
+            input.style.height = 'auto';
+
+            const s = sessions[currentSession];
+            s.messages.push({ role: 'user', content: text, time: now() });
+
+            removeEmpty();
+            renderChat();
+            scrollBottom();
+
+            // Thinking bubble
+            const thinkId = 'think-' + Date.now();
+            appendThinking(thinkId);
+
+            document.getElementById('send-btn').disabled = true;
+
+            try {
+                const res = await fetch(`${API}/chat`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ question: text, session_id: currentSession }),
+                });
+
+                const data = await res.json();
+
+                removeThinking(thinkId);
+
+                if (!res.ok) {
+                    s.messages.push({ role: 'bot', content: `⚠️ ${data.detail || 'Lỗi không xác định'}`, time: now(), sources: [] });
+                } else {
+                    s.messages.push({ role: 'bot', content: data.answer, time: now(), sources: data.sources || [] });
+                }
+            } catch (err) {
+                removeThinking(thinkId);
+                s.messages.push({ role: 'bot', content: `⚠️ Không kết nối được server: ${err.message}`, time: now(), sources: [] });
+            }
+
+            document.getElementById('send-btn').disabled = false;
+            renderChat();
+            scrollBottom();
+            renderSessions();
+        }
+
+        // ── Render chat ─────────────────────────────────────────────────────────────
+
+        function renderChat() {
+            const win = document.getElementById('chat-window');
+            if (!currentSession || !sessions[currentSession]) {
+                win.innerHTML = getEmptyHtml();
+                return;
+            }
+
+            const msgs = sessions[currentSession].messages;
+            if (!msgs.length) {
+                win.innerHTML = getEmptyHtml();
+                return;
+            }
+
+            win.innerHTML = msgs.map(m => renderMsg(m)).join('');
+        }
+
+        function renderMsg(m) {
+            const isUser = m.role === 'user';
+            const avatar = isUser ? '👤' : '🤖';
+            const content = escapeHtml(m.content).replace(/\n/g, '<br/>');
+
+            let meta = `<span>${m.time || ''}</span>`;
+            if (!isUser && m.sources && m.sources.length) {
+                meta += m.sources.map(s =>
+                    `<span class="sources-tag">📄 ${escapeHtml(s)}</span>`
+                ).join('');
+            }
+
+            return `
+    <div class="msg ${isUser ? 'user' : 'bot'}">
+      <div class="avatar">${avatar}</div>
+      <div>
+        <div class="bubble">${content}</div>
+        <div class="bubble-time">${meta}</div>
+      </div>
+    </div>`;
+        }
+
+        function appendThinking(id) {
+            const win = document.getElementById('chat-window');
+            const el = document.createElement('div');
+            el.id = id;
+            el.className = 'msg bot';
+            el.innerHTML = `
+    <div class="avatar">🤖</div>
+    <div>
+      <div class="bubble">
+        <div class="thinking"><span></span><span></span><span></span></div>
+      </div>
+    </div>`;
+            win.appendChild(el);
+            scrollBottom();
+        }
+
+        function removeThinking(id) {
+            document.getElementById(id)?.remove();
+        }
+
+        function removeEmpty() {
+            document.getElementById('empty-state')?.remove();
+        }
+
+        function getEmptyHtml() {
+            return `<div class="empty-state" id="empty-state">
+    <div class="empty-icon">📄</div>
+    <div class="empty-title">Bắt đầu cuộc trò chuyện</div>
+    <div class="empty-sub">Tạo chat mới → Upload tài liệu → Đặt câu hỏi<br/>Mỗi chat có kho tài liệu riêng, độc lập nhau.</div>
+  </div>`;
+        }
+
+        function scrollBottom() {
+            const win = document.getElementById('chat-window');
+            win.scrollTop = win.scrollHeight;
+        }
+
+        // ── Utils ───────────────────────────────────────────────────────────────────
+
+        function escapeHtml(str) {
+            return String(str)
+                .replace(/&/g, '&amp;')
+                .replace(/</g, '&lt;')
+                .replace(/>/g, '&gt;')
+                .replace(/"/g, '&quot;');
+        }
+
+        function truncate(str, n) {
+            return str.length > n ? str.slice(0, n) + '…' : str;
+        }
+
+        function now() {
+            return new Date().toLocaleTimeString('vi-VN', { hour: '2-digit', minute: '2-digit' });
+        }
+    </script>
+</body>
+
+</html>
